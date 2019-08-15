@@ -199,6 +199,22 @@ func (s *Stream) Count() int {
 	return len(s.b) + s.stream.count()
 }
 
+// Clone returns a *Stream that is a deep-copy of s.
+func (s *Stream) Clone() *Stream {
+	s2 := &Stream{
+		stream: &stream{
+			n: s.n,
+			l: make([]Sample, len(s.l), cap(s.l)),
+			ƒ: s.ƒ,
+		},
+		b:      make(Samples, len(s.b), cap(s.b)),
+		sorted: s.sorted,
+	}
+	copy(s2.l, s.l)
+	copy(s2.b, s.b)
+	return s2
+}
+
 func (s *Stream) flush() {
 	s.maybeSort()
 	s.stream.merge(s.b)

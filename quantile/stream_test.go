@@ -126,6 +126,20 @@ func TestTargetedQuerySmallSampleSize(t *testing.T) {
 	}
 }
 
+func TestClone(t *testing.T) {
+	rand.Seed(42)
+	s := NewTargeted(Targets)
+	populateStream(s)
+	s2 := s.Clone()
+	populateStream(s)
+	populateStream(s2)
+	for _, φ := range Targets {
+		if got, want := s2.Query(φ), s.Query(φ); got != want {
+			t.Errorf("want %f for φ=%f, got %f", want, φ, got)
+		}
+	}
+}
+
 func TestLowBiasedQuery(t *testing.T) {
 	rand.Seed(42)
 	s := NewLowBiased(RelativeEpsilon)
