@@ -288,25 +288,25 @@ func (s *stream) compress() {
 	if len(s.l) < 2 {
 		return
 	}
-	x := s.l[len(s.l)-1]
-	xi := len(s.l) - 1
+
+	write := len(s.l) - 1
+	x := s.l[write]
 	r := s.n - 1 - x.Width
 
-	for i := len(s.l) - 2; i >= 0; i-- {
+	for i := write - 1; i >= 0; i-- {
 		c := s.l[i]
 		if c.Width+x.Width+x.Delta <= s.ƒ(s, r) {
 			x.Width += c.Width
-			s.l[xi] = x
-			// Remove element at i.
-			copy(s.l[i:], s.l[i+1:])
-			s.l = s.l[:len(s.l)-1]
-			xi -= 1
 		} else {
+			s.l[write] = x
+			write--
 			x = c
-			xi = i
 		}
 		r -= c.Width
 	}
+	s.l[write] = x
+	copy(s.l, s.l[write:])
+	s.l = s.l[:len(s.l)-write]
 }
 
 func (s *stream) samples() Samples {
